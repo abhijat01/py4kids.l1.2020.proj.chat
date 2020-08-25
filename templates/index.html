@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat app</title>
+</head>
+<script src="/static/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    let socket = io("/chat");
+    let chat_message_received = function(data){
+        console.log(data) ;
+        const text_area = $("#all_chats") ;
+        let values = text_area.val() ;
+        values = values+"\n"+data['data'] ;
+        text_area.val(values) ;
+    };
+    let chat_connected = function(){
+        console.log("connected") ;
+    };
+    let chat_disconnected = function(){
+        console.log("disconnected") ;
+    };
+    let chat_message_submitted = function(event){
+        console.log("form submitted") ;
+        event.preventDefault(); // prevents page reloading
+        const text_input = $("#message") ;
+        let message = text_input.val() ;
+        socket.emit('chat.msg', {data:message});
+        text_input.val("") ;
+        return false;
+    };
+    let init_application = function(){
+        socket.on('connect',chat_connected);
+        socket.on('disconnect', chat_disconnected);
+        socket.on('chat.echo', chat_message_received );
+        $('form').submit(chat_message_submitted);
+    };
+    $(init_application);
+
+</script>
+<body>
+<form>
+    <table>
+        <tr>
+            <td><textarea cols="60" rows="40" id="all_chats"></textarea></td>
+        </tr>
+        <tr>
+            <td><input type="text" id="message" size="60"/></td>
+            <td><input type="submit" value="Submit"/></td>
+        </tr>
+    </table>
+
+</form>
+
+</body>
+</html>
