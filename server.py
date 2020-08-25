@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = 'xx11xx'
 socketio = SocketIO(app)
 
 
@@ -13,7 +13,7 @@ def index():
 
 @socketio.on('chat.msg', namespace='/chat')
 def test_message(message):
-    print(message['data'])
+    print("Message received:{}".format(message['data']))
     emit('chat.echo', {'data': message['data']}, broadcast=True)
 
 
